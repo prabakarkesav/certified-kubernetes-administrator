@@ -58,19 +58,31 @@ echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://a
 ```sh
 sudo apt-get update
 apt-cache madison kubeadm
-sudo apt-get install -y kubelet=1.24.0-00 kubeadm=1.24.0-00 kubectl=1.24.0-00 cri-tools=1.24.2-00
+sudo apt-get install -y kubelet=1.27.0-00 kubeadm=1.27.0-00 kubectl=1.27.0-00 cri-tools=1.26.0-00
+apt search cri-tools  
 sudo apt-mark hold kubelet kubeadm kubectl
 ```
 
 #### Step 4: Initialize Cluster with kubeadm (Only master node)
 ```sh
-kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.24.0
+kubeadm init --pod-network-cidr=10.244.0.0/16 --kubernetes-version=1.27.0
 ```
 ```sh
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+
 ```
+##### Step 4 b: crictl to default the runtime endpoint (master node)
+```sh
+cat <<EOF | sudo tee /etc/crictl.yaml
+runtime-endpoint: "unix:///run/containerd/containerd.sock"
+timeout: 0
+debug: false
+EOF
+```
+
 ##### Step 5: Install Network Addon (flannel) (master node)
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
