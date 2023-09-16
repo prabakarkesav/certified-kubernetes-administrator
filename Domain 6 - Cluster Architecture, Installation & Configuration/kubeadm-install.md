@@ -83,6 +83,30 @@ debug: false
 EOF
 ```
 
+##### Step 4 c: Install etcdctl  
+```sh
+export RELEASE=$(curl -s https://api.github.com/repos/etcd-io/etcd/releases/latest|grep tag_name | cut -d '"' -f 4)
+wget https://github.com/etcd-io/etcd/releases/download/${RELEASE}/etcd-${RELEASE}-linux-amd64.tar.gz
+tar xvf etcd-${RELEASE}-linux-amd64.tar.gz
+cd etcd-${RELEASE}-linux-amd64
+sudo mv etcd etcdctl etcdutl /usr/local/bin 
+
+$ etcd --version
+etcd Version: 3.5.2
+Git SHA: 99018a77b
+Go Version: go1.16.3
+Go OS/Arch: linux/amd64
+
+$ etcdctl version
+etcdctl version: 3.5.2
+API version: 3.5
+
+$ etcdutl version
+etcdutl version: 3.5.2
+API version: 3.5
+
+```
+
 ##### Step 5: Install Network Addon (flannel) (master node)
 ```sh
 kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
